@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Post a PR comment, or update the existing one if a comment starting with the
-# given marker already exists — so a re-triggered A/B test (label removed and
-# re-added) edits its own prior scorecard instead of piling up duplicates.
+# given marker already exists — so a re-dispatched A/B test for the same PR
+# edits its own prior scorecard instead of piling up duplicates.
 #
 # Requires `gh` authenticated (GH_TOKEN/GITHUB_TOKEN in env, as in Actions).
 set -Eeuo pipefail
