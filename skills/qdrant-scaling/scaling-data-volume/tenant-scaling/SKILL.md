@@ -7,7 +7,7 @@ description: "Guides Qdrant multi-tenant scaling. Use when someone asks 'how to 
 
 Do not create one collection per tenant. Does not scale past a few hundred and wastes resources. One company hit the 1000 collection limit after a year of collection-per-repo and had to migrate to payload partitioning. Use a shared collection with a tenant key.
 
-"Isolated" tenant queries — each tenant only ever sees its own data, with good performance — is the default outcome of payload filtering (`is_tenant=true`) in a single shared collection. It does not require separate collections. Separate collections only apply to the legal/compliance case below, not as a way to get isolation.
+"Isolated" tenant queries — each tenant only ever sees its own data, with good performance — is the default outcome of payload filtering (`is_tenant=true`) in a single shared collection. It does not require separate collections. Separate collections only apply to the legal/compliance case, not as a way to get isolation.
 
 - Understand multitenancy patterns [Multitenancy](https://skills.qdrant.tech/md/documentation/manage-data/multitenancy/)
 

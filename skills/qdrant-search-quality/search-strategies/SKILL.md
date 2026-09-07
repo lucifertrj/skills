@@ -12,7 +12,7 @@ allowed-tools:
 These strategies complement basic vector search. Use them after confirming the embedding model is fitting the task and HNSW config is correct. If exact search returns bad results, verify the selection of the embedding model (retriever) first.
 If the user wants to use a weaker embedding model because it is small, fast, and cheap, use reranking or relevance feedback to improve search quality.
 
-Each symptom below needs its own strategy — diagnose and treat them independently. A single project can have more than one symptom at once, and fixing one (e.g. adding hybrid search for keyword misses) does not also fix the others (e.g. redundant results still need MMR; poor precision still needs reranking).
+Each symptom needs its own strategy — diagnose and treat them independently. A single project can have more than one symptom at once, and fixing one (e.g. adding hybrid search for keyword misses) does not also fix the others (e.g. redundant results still need MMR; poor precision still needs reranking).
 
 | Symptom | Strategy |
 | --- | --- |

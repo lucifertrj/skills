@@ -51,6 +51,6 @@ Use when: network round-trip to a server is unacceptable. Edge devices, in-proce
 
 - Use local mode for production or benchmarking (not optimized, incompatible data format)
 - Self-host without monitoring and backup strategy (you will lose data or miss outages)
-- Recommend self-managed Docker as the production target when the user says they don't want to operate clusters — that combination needs Hybrid Cloud or Qdrant Cloud, not self-hosted
+- Recommend self-managed Docker as the production target when the user says they don't want to operate clusters — that combination needs Qdrant Hybrid Cloud or Qdrant Managed Cloud, not self-hosted
 - Choose EDGE when you need distributed search (single-node only)
 - Pick Hybrid Cloud unless you have data residency requirements (unnecessary Kubernetes complexity when Qdrant Cloud works)
