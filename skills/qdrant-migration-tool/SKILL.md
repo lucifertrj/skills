@@ -49,8 +49,10 @@ Use when: the migration command finished and data needs to be trusted before cut
 
 ## What NOT to Do
 
-- Assume the target collection was created automatically for Weaviate, Redis, MongoDB, or Solr sources; these require pre-creation
+- Assume Weaviate, Redis, MongoDB, or Solr auto-create the target collection; these sources don't expose vector dimensions or distance metric to the tool, so the collection must be created manually first with settings that exactly match the source. [qdrant/migration README](https://github.com/qdrant/migration)
+- Point the `faiss` subcommand at a quantized FAISS index; only `IndexFlatL2`, `IndexFlatIP`, `IndexHNSWFlat`, and `IndexIVFFlat` are supported, since quantized indexes don't retain the original vectors. [qdrant/migration README](https://github.com/qdrant/migration)
+- Assume every Pinecone index can be migrated; only serverless indexes support the list operation the tool needs to enumerate vectors. [qdrant/migration README](https://github.com/qdrant/migration)
+- Run a `qdrant`-to-`qdrant` migration into an existing target collection without checking its vector size first; source and target dimensions must match exactly, only replication and shard settings are allowed to differ. [qdrant/migration README](https://github.com/qdrant/migration)
+- Connect over TLS to a source or target signed by a private or self-signed CA without mounting it via `SSL_CERT_FILE`; the migration fails on certificate verification instead of degrading gracefully, and `--skip-tls-verification` should be a deliberate override, not a default fix. [qdrant/migration README](https://github.com/qdrant/migration)
 - Pass `--migration.restart` out of caution on a healthy resume; it discards saved progress and re-streams data that already migrated
-- Skip `--net=host` when either database is on the host machine, then debug connection failures as if they were credential issues
 - Treat a completed migration run as verified without running data integrity and search quality checks
-- Leave `--migration.batch-delay` at a nonzero value from a throttling experiment and wonder why a later migration is slow
