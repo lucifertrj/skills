@@ -1,5 +1,12 @@
-name: skill A/B test
+name: skill A/B test (manual)
 
+# Trust note: a dispatched run checks out the PR head and executes that
+# revision's scripts (match-changed-prompts.sh, build-image.sh, the harness
+# image, run-eval-matrix.sh, judge-runs.sh) with ANTHROPIC_API_KEY and
+# `pull-requests: write`. Under the old label trigger, fork PRs got no
+# secrets at all. Only dispatch for a PR whose diff — scripts and Dockerfile
+# included, not just `skills/` — you have read.
+#
 # Manually triggered: run from the Actions tab (or `gh workflow run`), passing
 # the PR number to test. Compares the skill(s) that PR touches — current main
 # (Version A) vs the PR's amended version (Version B) — using the same weekly
@@ -48,9 +55,12 @@ jobs:
     steps:
       - name: Resolve PR (base/head SHAs)
         id: pr
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
         run: |
           set -euo pipefail
-          json="$(gh pr view "${{ inputs.pr_number }}" --repo "${{ github.repository }}" \
+          [[ "$PR_NUMBER" =~ ^[0-9]+$ ]] || { echo "pr_number must be numeric: $PR_NUMBER" >&2; exit 64; }
+          json="$(gh pr view "$PR_NUMBER" --repo "${{ github.repository }}" \
             --json baseRefOid,headRefOid)"
           {
             echo "base_sha=$(jq -r '.baseRefOid' <<<"$json")"
@@ -94,6 +104,8 @@ jobs:
 
       - name: Comment — no scored prompts cover this PR's skill(s)
         if: steps.match.outputs.matched == '0'
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
         run: |
           set -euo pipefail
           {
@@ -102,7 +114,7 @@ jobs:
             echo
             echo "No scored prompt under \`evals/test-prompts/\` targets the skill(s) this PR changes, so there is nothing to compare. Add or update a test prompt for this skill family to enable the A/B test."
           } > /tmp/comment-body.md
-          scripts/scoring/post-pr-comment.sh --pr "${{ inputs.pr_number }}" \
+          scripts/scoring/post-pr-comment.sh --pr "$PR_NUMBER" \
             --marker "$COMMENT_MARKER" --body-file /tmp/comment-body.md
 
       - name: Install Claude CLI (host — used by the blind judge)
@@ -150,11 +162,13 @@ jobs:
 
       - name: Compare — build the A/B scorecard
         if: always() && steps.match.outputs.matched != '0'
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
         run: |
           scripts/scoring/compare-ab.py \
             --a /tmp/ab-out/version-a --b /tmp/ab-out/version-b \
             --label-a "main@${{ steps.pr.outputs.base_sha }}" \
-            --label-b "PR#${{ inputs.pr_number }}@${{ steps.pr.outputs.head_sha }}" \
+            --label-b "PR#${PR_NUMBER}@${{ steps.pr.outputs.head_sha }}" \
             --out /tmp/ab-out/ab-scorecard.md
 
       - name: Upload results (scorecard + manifests + scores + transcripts)
@@ -167,6 +181,8 @@ jobs:
 
       - name: Comment — post the scorecard
         if: always() && steps.match.outputs.matched != '0'
+        env:
+          PR_NUMBER: ${{ inputs.pr_number }}
         run: |
           set -euo pipefail
           run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
@@ -177,7 +193,7 @@ jobs:
               echo
               echo "Skill(s) tested: ${{ steps.match.outputs.leaves }}"
               echo
-              echo "Full transcripts: [workflow run]($run_url) artifact \`ab-test-${{ inputs.pr_number }}-${{ github.run_id }}\`."
+              echo "Full transcripts: [workflow run]($run_url) artifact \`ab-test-${PR_NUMBER}-${{ github.run_id }}\`."
             } > /tmp/comment-body.md
           else
             {
@@ -187,5 +203,5 @@ jobs:
               echo "The run did not produce a scorecard (it may have failed before comparison). Check the [workflow run]($run_url) for details."
             } > /tmp/comment-body.md
           fi
-          scripts/scoring/post-pr-comment.sh --pr "${{ inputs.pr_number }}" \
+          scripts/scoring/post-pr-comment.sh --pr "$PR_NUMBER" \
             --marker "$COMMENT_MARKER" --body-file /tmp/comment-body.md
