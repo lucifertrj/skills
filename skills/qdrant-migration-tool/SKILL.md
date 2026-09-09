@@ -49,7 +49,7 @@ Use when: the migration command finished and data needs to be trusted before cut
 
 ## What NOT to Do
 
-- Assume Weaviate, Redis, MongoDB, or Solr auto-create the target collection; these sources don't expose vector dimensions or distance metric to the tool, so the collection must be created manually first with settings that exactly match the source. [qdrant/migration README](https://github.com/qdrant/migration)
+- Assume Weaviate, Redis, MongoDB, or Solr auto-create the target collection; these sources don't expose vector dimensions or distance metric to the tool, so the collection must be created manually first with settings that exactly match the source. [Migrate to Qdrant](https://skills.qdrant.tech/md/documentation/migrate-to-qdrant/
 - Point the `faiss` subcommand at a quantized FAISS index; only `IndexFlatL2`, `IndexFlatIP`, `IndexHNSWFlat`, and `IndexIVFFlat` are supported, since quantized indexes don't retain the original vectors. [qdrant/migration README](https://github.com/qdrant/migration)
 - Assume every Pinecone index can be migrated; only serverless indexes support the list operation the tool needs to enumerate vectors. [qdrant/migration README](https://github.com/qdrant/migration)
 - Run a `qdrant`-to-`qdrant` migration into an existing target collection without checking its vector size first; source and target dimensions must match exactly, only replication and shard settings are allowed to differ. [qdrant/migration README](https://github.com/qdrant/migration)
