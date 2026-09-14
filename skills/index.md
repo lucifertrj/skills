@@ -2,6 +2,10 @@
 
 Agent skills encoding deep Qdrant knowledge for coding agents.
 
+## Qdrant Advisor
+
+- [qdrant-advisor](/qdrant-advisor/SKILL.md) — Meta-skill that loads the relevant skill below live at trigger time, so you install one skill instead of the full set and always get current guidance. Ships no static content of its own.
+
 ## Available Skills
 
 - [qdrant-clients-sdk](qdrant-clients-sdk/SKILL.md) — Client SDKs for Python, TypeScript, Rust, Go, .NET, and Java.
