@@ -4,7 +4,7 @@ Agent skills encoding deep Qdrant knowledge for coding agents.
 
 ## Qdrant Advisor
 
-- [qdrant-advisor](/qdrant-advisor/SKILL.md) — Meta-skill that loads the relevant skill below live at trigger time, so you install one skill instead of the full set and always get current guidance. Ships no static content of its own.
+- [qdrant-advisor](/qdrant-advisor/SKILL.md) — Meta-skill that loads the relevant Qdrant skill live at trigger time, so you install one skill instead of the full set and always get current guidance. Ships no static content of its own.
 
 ## Available Skills
 
